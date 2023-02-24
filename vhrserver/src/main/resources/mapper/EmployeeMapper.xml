@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.panther.vhr.mapper.EmployeeMapper">
+
+    <resultMap id="BaseResultMap" type="com.panther.vhr.model.entity.Employee">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" jdbcType="CHAR"/>
+        <result column="birthday" property="birthday" jdbcType="DATE"/>
+        <result column="idCard" property="idCard" jdbcType="CHAR"/>
+        <result column="wedlock" property="wedlock" jdbcType="CHAR"/>
+        <result column="nationId" property="nationId" jdbcType="INTEGER"/>
+        <result column="nativePlace" property="nativePlace" jdbcType="VARCHAR"/>
+        <result column="politicId" property="politicId" jdbcType="INTEGER"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="departmentId" property="departmentId" jdbcType="INTEGER"/>
+        <result column="jobLevelId" property="jobLevelId" jdbcType="INTEGER"/>
+        <result column="posId" property="posId" jdbcType="INTEGER"/>
+        <result column="engageForm" property="engageForm" jdbcType="VARCHAR"/>
+        <result column="tiptopDegree" property="tiptopDegree" jdbcType="CHAR"/>
+        <result column="specialty" property="specialty" jdbcType="VARCHAR"/>
+        <result column="school" property="school" jdbcType="VARCHAR"/>
+        <result column="beginDate" property="beginDate" jdbcType="DATE"/>
+        <result column="workState" property="workState" jdbcType="CHAR"/>
+        <result column="workID" property="workID" jdbcType="CHAR"/>
+        <result column="contractTerm" property="contractTerm" jdbcType="DOUBLE"/>
+        <result column="conversionTime" property="conversionTime" jdbcType="DATE"/>
+        <result column="notWorkDate" property="notWorkDate" jdbcType="DATE"/>
+        <result column="beginContract" property="beginContract" jdbcType="DATE"/>
+        <result column="endContract" property="endContract" jdbcType="DATE"/>
+        <result column="workAge" property="workAge" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="AllEmployeeInfo" type="com.panther.vhr.model.job.RespEmployee" extends="BaseResultMap">
+        <association property="nation" javaType="com.panther.vhr.model.entity.Nation">
+            <id column="nid" property="id" jdbcType="INTEGER"/>
+            <result column="nname" property="name" jdbcType="VARCHAR"/>
+        </association>
+        <association property="politicsstatus" javaType="com.panther.vhr.model.entity.Politicsstatus">
+            <id column="pid" property="id" jdbcType="INTEGER"/>
+            <result column="pname" property="name" jdbcType="VARCHAR"/>
+        </association>
+        <association property="department" javaType="com.panther.vhr.model.entity.Department">
+            <id column="did" property="id" jdbcType="INTEGER"/>
+            <result column="dname" property="name" jdbcType="VARCHAR"/>
+        </association>
+        <association property="jobLevel" javaType="com.panther.vhr.model.entity.JobLevel">
+            <id column="jid" property="id"/>
+            <result column="jname" property="name"/>
+            <result column="jtit" property="titleLevel"/>
+        </association>
+        <association property="position" javaType="com.panther.vhr.model.entity.Position">
+            <id column="poid" property="id"/>
+            <result column="poname" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="getEmployeeByPage" resultMap="AllEmployeeInfo">
+        select e.*,p.`id` as pid,p.`name` as pname,n.`id` as nid,n.`name` as nname,d.`id` as did,d.`name` as
+        dname,j.`id` as jid,j.`name` as jname,j.`titleLevel` as jti,pos.`id` as poid,pos.`name` as poname from employee e,nation
+        n,politicsstatus p,department d,joblevel j,position pos where e.`nationId`=n.`id` and e.`politicId`=p.`id` and
+        e.`departmentId`=d.`id` and e.`jobLevelId`=j.`id` and e.`posId`=pos.`id`
+        <if test="emp.name !=null and emp.name!=''">
+            and e.name like concat('%',#{emp.name},'%')
+        </if>
+        <if test="emp.politicId !=null">
+            and e.politicId =#{emp.politicId}
+        </if>
+        <if test="emp.nationId !=null">
+            and e.nationId =#{emp.nationId}
+        </if>
+        <if test="emp.departmentId !=null">
+            and e.departmentId =#{emp.departmentId}
+        </if>
+        <if test="emp.jobLevelId !=null">
+            and e.jobLevelId =#{emp.jobLevelId}
+        </if>
+        <if test="emp.engageForm !=null and emp.engageForm!=''">
+            and e.engageForm =#{emp.engageForm}
+        </if>
+        <if test="emp.posId !=null">
+            and e.posId =#{emp.posId}
+        </if>
+        <if test="beginDateScope !=null">
+            and e.beginDate between #{beginDateScope[0]} and #{beginDateScope[1]}
+        </if>
+        <if test="page !=null and size!=null">
+            limit #{page},#{size}
+        </if>
+    </select>
+
+    <select id="getTotal" resultType="java.lang.Long">
+        select count(*) from employee e
+    </select>
+
+    <select id="maxWorkID" resultType="java.lang.Integer">
+        select max(workID) from employee
+        <where>
+            <if test="emp!=null">
+                <if test="emp.name !=null and emp.name!=''">
+                    and e.name like concat('%',#{emp.name},'%')
+                </if>
+                <if test="emp.politicId !=null">
+                    and e.politicId =#{emp.politicId}
+                </if>
+                <if test="emp.nationId !=null">
+                    and e.nationId =#{emp.nationId}
+                </if>
+                <if test="emp.jobLevelId !=null">
+                    and e.jobLevelId =#{emp.jobLevelId}
+                </if>
+                <if test="emp.departmentId !=null">
+                    and e.departmentId =#{emp.departmentId}
+                </if>
+                <if test="emp.engageForm !=null and emp.engageForm!=''">
+                    and e.engageForm =#{emp.engageForm}
+                </if>
+                <if test="emp.posId !=null">
+                    and e.posId =#{emp.posId}
+                </if>
+            </if>
+            <if test="beginDateScope !=null">
+                and e.beginDate between #{beginDateScope[0]} and #{beginDateScope[1]}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="EmployeeWithSalary" type="com.panther.vhr.model.job.RespEmployee" extends="BaseResultMap">
+        <association property="salary" javaType="com.panther.vhr.model.entity.Salary">
+            <id column="sid" property="id" jdbcType="INTEGER"/>
+            <result column="sbasicSalary" property="basicSalary" jdbcType="INTEGER"/>
+            <result column="sbonus" property="bonus" jdbcType="INTEGER"/>
+            <result column="slunchSalary" property="lunchSalary" jdbcType="INTEGER"/>
+            <result column="strafficSalary" property="trafficSalary" jdbcType="INTEGER"/>
+            <result column="sallSalary" property="allSalary" jdbcType="INTEGER"/>
+            <result column="spensionBase" property="pensionBase" jdbcType="INTEGER"/>
+            <result column="spensionPer" property="pensionPer" jdbcType="REAL"/>
+            <result column="screateDate" property="createDate" jdbcType="TIMESTAMP"/>
+            <result column="smedicalBase" property="medicalBase" jdbcType="INTEGER"/>
+            <result column="smedicalPer" property="medicalPer" jdbcType="REAL"/>
+            <result column="saccumulationFundBase" property="accumulationFundBase" jdbcType="INTEGER"/>
+            <result column="saccumulationFundPer" property="accumulationFundPer" jdbcType="REAL"/>
+            <result column="sname" property="name" jdbcType="VARCHAR"/>
+        </association>
+        <association property="department" javaType="com.panther.vhr.model.entity.Department">
+            <result column="dname" property="name"/>
+        </association>
+    </resultMap>
+    <select id="getEmployeeByPageWithSalary" resultMap="EmployeeWithSalary">
+        SELECT e.*,d.`name` AS dname,s.`id` AS sid,s.`accumulationFundBase` AS
+        saccumulationFundBase,s.`accumulationFundPer` AS saccumulationFundPer,s.`allSalary` AS
+        sallSalary,s.`basicSalary` AS sbasicSalary,s.`bonus` AS sbonus,s.`createDate` AS screateDate,s.`lunchSalary` AS
+        slunchSalary,s.`medicalBase` AS smedicalBase,s.`medicalPer` AS smedicalPer,s.`name` AS sname,s.`pensionBase` AS
+        spensionBase,s.`pensionPer` AS spensionPer,s.`trafficSalary` AS strafficSalary FROM employee e LEFT JOIN
+        empsalary es ON e.`id`=es.`eid` LEFT JOIN salary s ON es.`sid`=s.`id` LEFT JOIN department d ON
+        e.`departmentId`=d.`id`
+        order by e.id
+        <if test="page !=null and size !=null">
+            limit #{page},#{size}
+        </if>
+    </select>
+
+    <insert id="updateEmployeeSalaryById">
+        REPLACE INTO empsalary (eid,sid) VALUES(#{eid},#{sid})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.panther.vhr.model.job.RespEmployee">
+        update employee
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null">
+                gender = #{gender,jdbcType=CHAR},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday,jdbcType=DATE},
+            </if>
+            <if test="idCard != null">
+                idCard = #{idCard,jdbcType=CHAR},
+            </if>
+            <if test="wedlock != null">
+                wedlock = #{wedlock,jdbcType=CHAR},
+            </if>
+            <if test="nationId != null">
+                nationId = #{nationId,jdbcType=INTEGER},
+            </if>
+            <if test="nativePlace != null">
+                nativePlace = #{nativePlace,jdbcType=VARCHAR},
+            </if>
+            <if test="politicId != null">
+                politicId = #{politicId,jdbcType=INTEGER},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentId != null">
+                departmentId = #{departmentId,jdbcType=INTEGER},
+            </if>
+            <if test="jobLevelId != null">
+                jobLevelId = #{jobLevelId,jdbcType=INTEGER},
+            </if>
+            <if test="posId != null">
+                posId = #{posId,jdbcType=INTEGER},
+            </if>
+            <if test="engageForm != null">
+                engageForm = #{engageForm,jdbcType=VARCHAR},
+            </if>
+            <if test="tiptopDegree != null">
+                tiptopDegree = #{tiptopDegree,jdbcType=CHAR},
+            </if>
+            <if test="specialty != null">
+                specialty = #{specialty,jdbcType=VARCHAR},
+            </if>
+            <if test="school != null">
+                school = #{school,jdbcType=VARCHAR},
+            </if>
+            <if test="beginDate != null">
+                beginDate = #{beginDate,jdbcType=DATE},
+            </if>
+            <if test="workState != null">
+                workState = #{workState,jdbcType=CHAR},
+            </if>
+            <if test="workID != null">
+                workID = #{workID,jdbcType=CHAR},
+            </if>
+            <if test="contractTerm != null">
+                contractTerm = #{contractTerm,jdbcType=DOUBLE},
+            </if>
+            <if test="conversionTime != null">
+                conversionTime = #{conversionTime,jdbcType=DATE},
+            </if>
+            <if test="notWorkDate != null">
+                notWorkDate = #{notWorkDate,jdbcType=DATE},
+            </if>
+            <if test="beginContract != null">
+                beginContract = #{beginContract,jdbcType=DATE},
+            </if>
+            <if test="endContract != null">
+                endContract = #{endContract,jdbcType=DATE},
+            </if>
+            <if test="workAge != null">
+                workAge = #{workAge,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+</mapper>
