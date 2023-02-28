@@ -105,7 +105,7 @@ public class EmployeeController {
     @GetMapping("/maxWorkID")
     public Result maxWorkID() {
         return Result.build().setStatus(200)
-                .setObj(String.format("%08d", employeeService.maxWorkID() + 1));
+                .setData(String.format("%08d", employeeService.maxWorkID() + 1));
     }
 
     @DeleteMapping("/{id}")

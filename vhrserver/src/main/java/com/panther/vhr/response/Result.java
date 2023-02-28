@@ -7,7 +7,11 @@ package com.panther.vhr.response;
 public class Result {
     private Integer status;
     private String msg;
-    private Object obj;
+    private Object data;
+
+    public Result(){
+
+    }
 
     public static Result build() {
         return new Result();
@@ -17,25 +21,18 @@ public class Result {
         return new Result(200, msg, null);
     }
 
-    public static Result ok(String msg, Object obj) {
-        return new Result(200, msg, obj);
+    public static Result ok(String msg, Object data) {
+        return new Result(200, msg, data);
     }
 
     public static Result error(String msg) {
         return new Result(500, msg, null);
     }
 
-    public static Result error(String msg, Object obj) {
-        return new Result(500, msg, obj);
-    }
-
-    private Result() {
-    }
-
-    private Result(Integer status, String msg, Object obj) {
+    private Result(Integer status, String msg, Object data) {
         this.status = status;
         this.msg = msg;
-        this.obj = obj;
+        this.data = data;
     }
 
     public Integer getStatus() {
@@ -56,12 +53,12 @@ public class Result {
         return this;
     }
 
-    public Object getObj() {
-        return obj;
+    public Object getData() {
+        return data;
     }
 
-    public Result setObj(Object obj) {
-        this.obj = obj;
+    public Result setData(Object data) {
+        this.data = data;
         return this;
     }
 }

@@ -17,13 +17,8 @@ public class UserLoginVerifyInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession(true);
 
-        if (session.getAttribute("LoginHR") == null) {
-            response.setCharacterEncoding("utf-8");
-            response.setContentType("application/json; charset=utf-8");
-            //response.sendRedirect("/");
-            return false;
-        }
-        return true;
+        return session.getAttribute("LoginHR") != null;
+        //response.sendRedirect("/");
     }
 
     @Override
