@@ -3,7 +3,6 @@ package com.panther.vhr.controller;
 import com.panther.vhr.model.job.RespMenu;
 import com.panther.vhr.serviec.MenuService;
 import com.panther.vhr.utils.RedisUtils;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,23 +21,23 @@ public class SystemController {
     @Resource
     private MenuService menuService;
 
-    @Resource
-    private RedisTemplate<String,List<RespMenu>> redisTemplate;
+//    @Resource
+//    private RedisTemplate<String,List<RespMenu>> redisTemplate;
 
     @GetMapping("/menu")
     public List<RespMenu> getMenu(){
-        List<RespMenu> respMenus = null;
+//        List<RespMenu> respMenus = null;
+//
+//        // 判断缓存是否存在值
+//        respMenus = redisTemplate.opsForValue().get("menus");
+//        if(respMenus != null){
+//            return respMenus;
+//        }
+//
+//        // 保存在redis中
+//        respMenus = menuService.QueryMenu();
+//        redisTemplate.opsForValue().set("menus",respMenus);
 
-        // 判断缓存是否存在值
-        respMenus = redisTemplate.opsForValue().get("menus");
-        if(respMenus != null){
-            return respMenus;
-        }
-
-        // 保存在redis中
-        respMenus = menuService.QueryMenu();
-        redisTemplate.opsForValue().set("menus",respMenus);
-
-        return respMenus;
+        return menuService.QueryMenu();
     }
 }

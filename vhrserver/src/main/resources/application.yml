@@ -1,20 +1,29 @@
 spring:
+  application:
+    name: ginhr
+  boot:
+    admin:
+      client:
+        instance:
+          prefer-ip: true
+        url: http://localhost:8888
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://localhost:3306/mini-hr?serverTimezone=Asia/Shanghai
       username: root
       password: panther9985
-  redis:
-    host: 127.0.0.1
-    database: 0
-    port: 6379
-  cache:
-    cache-names: menus_cache
+#  redis:
+#    host: 127.0.0.1
+#    database: 0
+#    port: 6379
+#  cache:
+#    cache-names: menus_cache
 server:
   port: 9001
   compression:
     enabled: true
+
 
 mybatis-plus:
   configuration:
@@ -29,3 +38,21 @@ mybatis-plus:
 
 file:
   path: D:\download\项目区\java\ginhr\vhrserver\src\main\resources\static\img\
+
+# management 是所有actuator的配置
+management:
+  endpoints:
+    enabled-by-default: true # 默认开启所有监控
+    web:
+      exposure:
+        include: '*'
+  endpoint: # endpoints是对所有的端点的配置，endpoint是对详细端点的配置
+    health:
+      show-details: always
+    info:
+      enabled: true
+# 定制化返回信息
+info:
+  adminName: 'boot-gin'
+  artifactId: @project.artifactId@
+  version: @project.version@

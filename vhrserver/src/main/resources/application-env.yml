@@ -1,0 +1,12 @@
+server:
+  port: 9001
+
+spring:
+  redis:
+    host: 127.0.0.1
+    database: 0
+    port: 6379
+
+file:
+  path: src/static/img
+

@@ -1,25 +1,34 @@
 let proxyObj = {};
+const CompressionPlugin = require("compression-webpack-plugin");
+proxyObj['/ws'] = {
+    ws: true,
+    target: "ws://localhost:8081"
+};
 proxyObj['/'] = {
-        ws: false,
-        // 远程地址和端口
-        target: 'http://localhost:9001',
-        changeOrigin: true,
-        pathRewrite: {
-            '^/vhr': ''
-        },
-        bypass: function(req) {
-            if (req.headers.accept.indexOf('html') !== -1) {
-                // console.log('Skipping proxy for browser request.');
-                return '/index.html';
-            }
-        },
+    ws: false,
+    target: 'http://localhost:9001',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/': ''
     }
-    // 指定远程服务器的地址
+}
 module.exports = {
     devServer: {
-        // 本地地址端口
         host: 'localhost',
         port: 8081,
-        proxy: proxyObj,
+        proxy: proxyObj
     },
+    configureWebpack: config => {
+        if (process.env.NODE_ENV === 'production') {
+            return {
+                plugins: [
+                    new CompressionPlugin({
+                        test: /\.js$|\.html$|\.css/,
+                        threshold: 1024,
+                        deleteOriginalAssets: false
+                    })
+                ]
+            }
+        }
+    }
 }

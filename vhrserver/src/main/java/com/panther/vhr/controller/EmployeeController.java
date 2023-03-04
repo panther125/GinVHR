@@ -8,7 +8,6 @@ import com.panther.vhr.model.job.RespPageBean;
 import com.panther.vhr.response.Result;
 import com.panther.vhr.serviec.*;
 import com.panther.vhr.utils.POIUtils;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +45,8 @@ public class EmployeeController {
     private DepartmentService departmentService;
 
 
-    @Resource
-    private RedisTemplate<String,List<RespEmployee>> redisTemplate;
+//    @Resource
+//    private RedisTemplate<String,List<RespEmployee>> redisTemplate;
 
     @GetMapping
     public RespPageBean getEmployeeByPage(@RequestParam(defaultValue = "1") Integer page,
